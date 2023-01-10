@@ -1,0 +1,7 @@
+{
+    "name" : "My express app - development",
+    "db": "mongodb://localhost/mongo-exercises",
+    "mail" : {
+        "host" : "dev-mail-folder"
+    }
+}

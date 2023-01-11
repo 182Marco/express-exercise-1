@@ -5,7 +5,7 @@ const config = require('config')
 mongoose
   .connect(config.get('db'))
   .then(() => console.log('connected to mongoDB...'))
-  .catch(er => console.er('error:', er))
+  .catch((er) => console.er('error:', er))
 
 const courseSchema = new mongoose.Schema({
   id: Number,
@@ -14,17 +14,17 @@ const courseSchema = new mongoose.Schema({
   tags: [String],
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
-  price: Number
+  price: Number,
 })
 
-const Movie = mongoose.model('Courses', courseSchema) 
+const Movie = mongoose.model('Courses', courseSchema)
 
-const getMovie = async () => {
-  const movies = await Movie.find()
-    .sort({ name: 1 }) 
-    .select('name') 
-     console.log(`those are the movies : `,
-     movies) 
-}
+const getMovie = async () =>
+  await Movie.find({
+    isPublished: true,
+    tags: { $in: ['backend', 'frontend'] },
+  })
+    .sort('-price')
+    .select('name author price')
 
-getMovie()
+getMovie().then((res) => console.log(res))

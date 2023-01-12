@@ -14,7 +14,7 @@ const courseSchema = new mongoose.Schema({
     required: true,
     minlength: 3,
     maxlength: 10,
-    match: /^by/i
+    match: /.*by.*/i
   },
   category: {
     type: String,
@@ -22,7 +22,13 @@ const courseSchema = new mongoose.Schema({
     enum: ['mobile', 'web', 'network']
   },
   author: String,
-  tags: [String],
+  tags: {
+    type: Array,
+    validate: {
+         validator: v => v && v.length,
+         message: 'You should have at least one tag'
+    }
+  },
   date: { type: Date, default: Date.now },
   isPublished: Boolean,
   price: {
@@ -36,7 +42,7 @@ const Course = mongoose.model('Courses', courseSchema)
 
 const createCourse = async () => {
   const c = new Course({
-     name: 'by a name',
+     name: 'NEW1 BY',
      isPublished: false,
      category: 'mobile'
   })
@@ -44,7 +50,7 @@ const createCourse = async () => {
   console.log('this is the creation res: ', res)
 }
 
-// createCourse()
+createCourse()
 
 const getCourse = async () =>
   await Course.find({
@@ -52,7 +58,7 @@ const getCourse = async () =>
   })
     .select('name author price category')
 
-getCourse().then(r => console.log(r))
+// getCourse().then(r => console.log(r))
 
 
 const upDateCourse =  async (id) => {

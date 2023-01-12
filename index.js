@@ -5,10 +5,10 @@ const config = require('config')
 mongoose
   .connect(config.get('db'))
   .then(() => console.log('connected to mongoDB...'))
-  .catch((er) => console.er('error:', er))
+  .catch(er => console.er('error:', er))
 
 const courseSchema = new mongoose.Schema({
-  id: Number,
+  _id: {type: String},
   name: String,
   author: String,
   tags: [String],
@@ -17,14 +17,25 @@ const courseSchema = new mongoose.Schema({
   price: Number,
 })
 
-const Movie = mongoose.model('Courses', courseSchema)
+const Course = mongoose.model('Courses', courseSchema)
 
-const getMovie = async () =>
-  await Movie.find({
+const getCourse = async () =>
+  await Course.find({
     isPublished: true,
-    tags: { $in: ['backend', 'frontend'] },
   })
+    .or([{ price: { $gte: 15 } }, { name: { $regex: /.*by.*/i } }])
     .sort('-price')
     .select('name author price')
 
-getMovie().then((res) => console.log(res))
+getCourse().then(r => console.log(r))
+
+
+const upDateCourse =  async (id) => {
+  const c = await Course.findById(id);
+  if(!c) return
+  c.author = 'other author'
+  const r = await c.save()
+  return r
+}
+
+upDateCourse('5a6900fff467be65019a9001').then(r => console.log(r))
